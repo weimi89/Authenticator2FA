@@ -1,0 +1,14 @@
+# Rust / Cargo
+src-tauri/target/
+# 保留 Cargo.lock — binary crate 鎖定依賴版本以利重現建置
+
+# Tauri 自動產出
+src-tauri/gen/
+
+# macOS
+.DS_Store
+
+# IDE
+.idea/
+.vscode/
+*.swp
