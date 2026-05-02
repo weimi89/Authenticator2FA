@@ -85,4 +85,4 @@ cd src-tauri && cargo test
 
 ## 授權
 
-尚未指定。
+[MIT License](./LICENSE) © 2026 weimi89

@@ -4,6 +4,8 @@ version = "0.1.0"
 description = "桌面版 2FA Authenticator"
 edition = "2021"
 rust-version = "1.77"
+license = "MIT"
+repository = "https://github.com/weimi89/Authenticator2FA"
 
 [lib]
 name = "authenticator_2fa_lib"
