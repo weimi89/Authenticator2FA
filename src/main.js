@@ -25,6 +25,7 @@ const accountList = $("#account-list");
 const emptyState = $("#empty-state");
 const searchEmpty = $("#search-empty");
 const searchEmptyText = $("#search-empty-text");
+const vaultOverview = $("#vault-overview");
 const searchBar = $("#search-bar");
 const searchInput = $("#search-input");
 const modalAdd = $("#modal-add");
@@ -103,6 +104,34 @@ function escapeHtml(s) {
 function formatCode(s) {
   const half = Math.ceil(s.length / 2);
   return s.slice(0, half) + " " + s.slice(half);
+}
+
+function codeWindowLabel() {
+  let minRemaining = null;
+  for (const c of codes.values()) {
+    if (typeof c.remaining !== "number") continue;
+    minRemaining = minRemaining === null ? c.remaining : Math.min(minRemaining, c.remaining);
+  }
+  if (minRemaining === null) return "—";
+  return t("overview.next_value", { seconds: minRemaining });
+}
+
+function renderVaultOverview() {
+  if (!vaultOverview) return;
+  const hiddenMode = settings.hideCodes ? t("overview.hidden_on") : t("overview.hidden_off");
+  vaultOverview.innerHTML = `
+    <div class="overview-item overview-item-strong">
+      <span class="overview-label">${escapeHtml(t("overview.accounts_label"))}</span>
+      <strong>${escapeHtml(t("overview.accounts_value", { count: accounts.length }))}</strong>
+    </div>
+    <div class="overview-item">
+      <span class="overview-label">${escapeHtml(t("overview.next_label"))}</span>
+      <strong>${escapeHtml(codeWindowLabel())}</strong>
+    </div>
+    <div class="overview-item">
+      <span class="overview-label">${escapeHtml(t("overview.privacy_label"))}</span>
+      <strong>${escapeHtml(hiddenMode)}</strong>
+    </div>`;
 }
 
 // 把字串雜湊成 0..360 的色相,讓每個 issuer 有穩定且不同的代表色
@@ -222,6 +251,7 @@ async function loadAccounts() {
   try {
     accounts = await invoke("list_accounts");
     await refreshCodes(true);
+    renderVaultOverview();
     renderList();
   } catch (err) {
     showToast(t("toast.read_failed", { err: tError(err) }));
@@ -249,6 +279,7 @@ function filteredAccounts() {
 }
 
 function renderList() {
+  renderVaultOverview();
   if (accounts.length === 0) {
     accountList.classList.add("hidden");
     emptyState.classList.remove("hidden");
@@ -305,6 +336,11 @@ function renderList() {
           <div class="account-info">
             ${a.issuer ? `<div class="account-issuer">${escapeHtml(a.issuer)}</div>` : ""}
             <div class="account-name">${escapeHtml(a.name)}</div>
+            <div class="account-meta">
+              <span>${escapeHtml(a.algorithm || "TOTP")}</span>
+              <span>${escapeHtml(String(a.digits))}</span>
+              <span>${escapeHtml(String(a.period))}s</span>
+            </div>
             <div class="account-code ${expiring && !isHidden ? "expiring" : ""} ${changed ? "changed" : ""} ${isHidden ? "hidden-code" : ""}">${code}</div>
           </div>
           <div class="countdown ${expiring && !isHidden ? "expiring" : ""}">
@@ -596,6 +632,7 @@ window.i18n.onChange(() => {
   buildSettingsLangSelect();
   applySettingsValues();
   applyAboutVersion();
+  renderVaultOverview();
   if (!lockScreen.classList.contains("hidden")) applyLockTexts();
   if (!mainScreen.classList.contains("hidden")) renderList();
 });
@@ -716,6 +753,7 @@ settingHideCodes.addEventListener("change", () => {
   settings.hideCodes = settingHideCodes.checked;
   saveSettings();
   revealedIds.clear();
+  renderVaultOverview();
   renderList();
 });
 

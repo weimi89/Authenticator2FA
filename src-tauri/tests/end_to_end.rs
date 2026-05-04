@@ -1,7 +1,7 @@
 //! End-to-end 整合測試:模擬完整流程
 //! 建立金庫 → 加帳戶 → 加密寫入 → 重新讀取 → 解密 → 產生 TOTP 程式碼
 
-use authenticator_2fa_lib::{
+use auth_2fa_lib::{
     crypto::{derive_key, KdfParams},
     otpauth,
     storage::{self, Account, OtpKind, VaultPlain},

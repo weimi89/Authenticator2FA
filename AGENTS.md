@@ -1,6 +1,6 @@
-# CLAUDE.md
+# AGENTS.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+This file provides guidance to Codex (Codex.ai/code) when working with code in this repository.
 
 ## 常用指令
 
@@ -69,7 +69,7 @@ totp.rs / otpauth.rs / crypto.rs / storage.rs    ← 純模組,不依賴 Tauri
 
 ### Vault 檔案位置
 
-`app.path().app_data_dir() / vault.json`。在 macOS 為 `~/Library/Application Support/app.miao.auth2fa/vault.json`。
+`app.path().app_data_dir() / vault.json`。在 macOS 為 `~/Library/Application Support/app.miao.authenticator2fa/vault.json`。
 
 ## 規範與陷阱
 
@@ -81,7 +81,7 @@ totp.rs / otpauth.rs / crypto.rs / storage.rs    ← 純模組,不依賴 Tauri
 - **前端 HTML 跳脫**:`main.js` 的 `escapeHtml()` 用於 `renderList()` 內每個被插入的字串 — 編輯時請保留。
 - **視窗尺寸**:460×720,設計假設單欄、無水平捲軸。
 
-## 專案規則(來自使用者全域 CLAUDE.md)
+## 專案規則(來自使用者全域 AGENTS.md)
 
 - **不偷懶 / 不留 TODO**:修 bug 時要找根因,且把同樣的修法套用到專案中所有同類結構處。不可用 `try/catch`、skip flag 或「之後再做」的註解蓋住問題。
 - **測試放在 `tests/`**:整合測試置於 `src-tauri/tests/`(遵循 Cargo 慣例);模組級單元測試保留在模組內的 `#[cfg(test)] mod tests`。

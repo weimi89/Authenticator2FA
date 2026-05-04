@@ -1,4 +1,4 @@
-# Authenticator 2FA
+# Auth 2FA
 
 離線、開源、加密儲存的桌面版 2FA Authenticator,以 **Tauri 2 + Rust** 打造。
 
@@ -26,9 +26,9 @@
 
 Vault 檔案位置:
 
-- macOS:`~/Library/Application Support/app.miao.authenticator2fa/vault.json`
-- Linux:`~/.local/share/app.miao.authenticator2fa/vault.json`
-- Windows:`%APPDATA%\app.miao.authenticator2fa\vault.json`
+- macOS:`~/Library/Application Support/app.miao.auth2fa/vault.json`
+- Linux:`~/.local/share/app.miao.auth2fa/vault.json`
+- Windows:`%APPDATA%\app.miao.auth2fa\vault.json`
 
 > ⚠ 忘記主密碼將**無法**復原任何資料。請妥善保管,並備份 vault 檔案。
 

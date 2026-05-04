@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Authenticator 2FA</title>
+    <title>Auth 2FA</title>
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
@@ -11,13 +11,15 @@
     <section id="lock-screen" class="screen hidden">
       <div class="lock-card">
         <div class="logo">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-               stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <rect x="3" y="11" width="18" height="11" rx="2" />
-            <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path class="logo-mark-shield" d="M12 2.75 19 5.6v5.8c0 4.5-2.83 8.18-7 9.85-4.17-1.67-7-5.35-7-9.85V5.6L12 2.75Z" />
+            <rect class="logo-mark-panel" x="6.7" y="10.15" width="10.6" height="5.9" rx="2.1" />
+            <circle class="logo-mark-dot logo-mark-dot-a" cx="9.2" cy="13.1" r="0.72" />
+            <circle class="logo-mark-dot logo-mark-dot-b" cx="12" cy="13.1" r="0.72" />
+            <circle class="logo-mark-dot logo-mark-dot-c" cx="14.8" cy="13.1" r="0.72" />
           </svg>
         </div>
-        <h1 id="lock-title">Authenticator 2FA</h1>
+        <h1 id="lock-title">Auth 2FA</h1>
         <p id="lock-subtitle" class="subtitle"></p>
 
         <form id="lock-form" autocomplete="off">
@@ -50,10 +52,12 @@
       <header class="top-bar">
         <div class="top-bar-title">
           <span class="top-bar-logo">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
-                 stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-              <rect x="3" y="11" width="18" height="11" rx="2" />
-              <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path class="logo-mark-shield" d="M12 2.75 19 5.6v5.8c0 4.5-2.83 8.18-7 9.85-4.17-1.67-7-5.35-7-9.85V5.6L12 2.75Z" />
+              <rect class="logo-mark-panel" x="6.7" y="10.15" width="10.6" height="5.9" rx="2.1" />
+              <circle class="logo-mark-dot logo-mark-dot-a" cx="9.2" cy="13.1" r="0.72" />
+              <circle class="logo-mark-dot logo-mark-dot-b" cx="12" cy="13.1" r="0.72" />
+              <circle class="logo-mark-dot logo-mark-dot-c" cx="14.8" cy="13.1" r="0.72" />
             </svg>
           </span>
           <h2 data-i18n="top.title">Authenticator</h2>
@@ -111,6 +115,8 @@
         </div>
       </header>
 
+      <section id="vault-overview" class="vault-overview" aria-live="polite"></section>
+
       <!-- 搜尋列(預設摺疊) -->
       <div id="search-bar" class="search-bar hidden">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
@@ -136,11 +142,12 @@
       </div>
       <div id="empty-state" class="empty-state hidden">
         <div class="empty-illustration">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
-               stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <rect x="3" y="11" width="18" height="11" rx="2" />
-            <path d="M7 11V7a5 5 0 0 1 10 0v4" />
-            <circle cx="12" cy="16" r="1" fill="currentColor" />
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path class="logo-mark-shield" d="M12 2.75 19 5.6v5.8c0 4.5-2.83 8.18-7 9.85-4.17-1.67-7-5.35-7-9.85V5.6L12 2.75Z" />
+            <rect class="logo-mark-panel" x="6.7" y="10.15" width="10.6" height="5.9" rx="2.1" />
+            <circle class="logo-mark-dot logo-mark-dot-a" cx="9.2" cy="13.1" r="0.72" />
+            <circle class="logo-mark-dot logo-mark-dot-b" cx="12" cy="13.1" r="0.72" />
+            <circle class="logo-mark-dot logo-mark-dot-c" cx="14.8" cy="13.1" r="0.72" />
           </svg>
         </div>
         <h3 data-i18n="empty.title"></h3>
@@ -298,10 +305,30 @@
       </header>
 
       <div class="settings-page">
-        <section class="settings-section">
+        <section class="settings-hero" aria-labelledby="settings-hero-title">
+          <div class="settings-hero-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24">
+              <path class="logo-mark-shield" d="M12 2.75 19 5.6v5.8c0 4.5-2.83 8.18-7 9.85-4.17-1.67-7-5.35-7-9.85V5.6L12 2.75Z" />
+              <rect class="logo-mark-panel" x="6.7" y="10.15" width="10.6" height="5.9" rx="2.1" />
+              <circle class="logo-mark-dot logo-mark-dot-a" cx="9.2" cy="13.1" r="0.72" />
+              <circle class="logo-mark-dot logo-mark-dot-b" cx="12" cy="13.1" r="0.72" />
+              <circle class="logo-mark-dot logo-mark-dot-c" cx="14.8" cy="13.1" r="0.72" />
+            </svg>
+          </div>
+          <div class="settings-hero-copy">
+            <strong id="settings-hero-title" data-i18n="settings.hero.title"></strong>
+            <span data-i18n="settings.hero.body"></span>
+          </div>
+          <span class="settings-hero-badge" data-i18n="settings.hero.badge"></span>
+        </section>
+
+        <section class="settings-section settings-section-appearance">
           <h4 data-i18n="settings.section.appearance"></h4>
           <div class="settings-row">
-            <label data-i18n="settings.theme.label"></label>
+            <div class="settings-label-group">
+              <label data-i18n="settings.theme.label"></label>
+              <p class="settings-hint" data-i18n="settings.theme.hint"></p>
+            </div>
             <select id="setting-theme">
               <option value="auto" data-i18n="settings.theme.auto"></option>
               <option value="light" data-i18n="settings.theme.light"></option>
@@ -309,15 +336,21 @@
             </select>
           </div>
           <div class="settings-row">
-            <label data-i18n="settings.language.label"></label>
+            <div class="settings-label-group">
+              <label data-i18n="settings.language.label"></label>
+              <p class="settings-hint" data-i18n="settings.language.hint"></p>
+            </div>
             <select id="setting-language"></select>
           </div>
         </section>
 
-        <section class="settings-section">
+        <section class="settings-section settings-section-security">
           <h4 data-i18n="settings.section.security"></h4>
           <div class="settings-row">
-            <label data-i18n="settings.autolock.label"></label>
+            <div class="settings-label-group">
+              <label data-i18n="settings.autolock.label"></label>
+              <p class="settings-hint" data-i18n="settings.autolock.hint"></p>
+            </div>
             <select id="setting-autolock">
               <option value="0" data-i18n="settings.autolock.off"></option>
               <option value="60" data-i18n="settings.autolock.1m"></option>
@@ -328,39 +361,43 @@
           </div>
           <div class="settings-row settings-row-vertical">
             <div class="settings-row-inline">
-              <label data-i18n="settings.reveal.label"></label>
+              <div class="settings-label-group">
+                <label data-i18n="settings.reveal.label"></label>
+                <p class="settings-hint" data-i18n="settings.reveal.hint"></p>
+              </div>
               <input id="setting-hide-codes" type="checkbox" class="toggle" />
             </div>
-            <p class="settings-hint" data-i18n="settings.reveal.hint"></p>
           </div>
           <div class="settings-row">
-            <button id="btn-change-password" class="btn btn-ghost" data-i18n="settings.change_password.button"></button>
+            <button id="btn-change-password" class="btn btn-ghost settings-action settings-action-secure" data-i18n="settings.change_password.button"></button>
           </div>
         </section>
 
-        <section class="settings-section">
+        <section class="settings-section settings-section-backup">
           <h4 data-i18n="settings.section.backup"></h4>
           <div class="settings-row settings-row-vertical">
-            <button id="btn-export" class="btn btn-ghost" data-i18n="settings.export.button"></button>
+            <button id="btn-export" class="btn btn-ghost settings-action settings-action-export" data-i18n="settings.export.button"></button>
             <p class="settings-hint" data-i18n="settings.export.hint"></p>
           </div>
           <div class="settings-row">
-            <button id="btn-import" class="btn btn-ghost" data-i18n="settings.import.button"></button>
+            <button id="btn-import" class="btn btn-ghost settings-action settings-action-import" data-i18n="settings.import.button"></button>
           </div>
         </section>
 
-        <section class="settings-section">
+        <section class="settings-section settings-section-about">
           <h4 data-i18n="settings.section.about"></h4>
           <div class="settings-about">
             <div class="logo logo-sm">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
-                   stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                <rect x="3" y="11" width="18" height="11" rx="2" />
-                <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path class="logo-mark-shield" d="M12 2.75 19 5.6v5.8c0 4.5-2.83 8.18-7 9.85-4.17-1.67-7-5.35-7-9.85V5.6L12 2.75Z" />
+                <rect class="logo-mark-panel" x="6.7" y="10.15" width="10.6" height="5.9" rx="2.1" />
+                <circle class="logo-mark-dot logo-mark-dot-a" cx="9.2" cy="13.1" r="0.72" />
+                <circle class="logo-mark-dot logo-mark-dot-b" cx="12" cy="13.1" r="0.72" />
+                <circle class="logo-mark-dot logo-mark-dot-c" cx="14.8" cy="13.1" r="0.72" />
               </svg>
             </div>
             <div>
-              <strong>Authenticator 2FA</strong>
+              <strong>Auth 2FA</strong>
               <p class="settings-hint" data-i18n="settings.about.tagline"></p>
               <p class="settings-hint" id="settings-version"></p>
             </div>

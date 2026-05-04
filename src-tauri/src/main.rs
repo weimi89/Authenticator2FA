@@ -2,5 +2,5 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
 fn main() {
-    authenticator_2fa_lib::run()
+    auth_2fa_lib::run()
 }
