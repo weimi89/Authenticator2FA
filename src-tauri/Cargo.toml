@@ -1,6 +1,6 @@
 [package]
 name = "auth-2fa"
-version = "0.1.0"
+version = "0.1.1"
 description = "Auth 2FA — 桌面版雙因素驗證器"
 edition = "2021"
 rust-version = "1.77"
