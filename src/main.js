@@ -559,6 +559,7 @@ document.addEventListener("keydown", (e) => {
   if (!modalAdd.classList.contains("hidden")) { closeAddModal(); return; }
   if (!modalEdit.classList.contains("hidden")) { closeEditModal(); return; }
   if (!modalChangepw.classList.contains("hidden")) { closeChangepw(); return; }
+  if (lockLangOpen) { closeLockLangMenu(); return; }
   if (!langMenu.classList.contains("hidden")) { closeLangMenu(); return; }
   if (!settingsScreen.classList.contains("hidden")) { closeSettings(); return; }
 });
@@ -567,31 +568,61 @@ document.addEventListener("keydown", (e) => {
 const langBtn = $("#btn-lang");
 const langMenu = $("#lang-menu");
 const lockLangRow = $("#lock-lang-row");
+let lockLangOpen = false;
+
+function localeButtonHtml(locale, cur, variant = "menu") {
+  const active = locale.code === cur;
+  const activeClass = active ? " active" : "";
+  const role = variant === "settings" ? "radio" : variant === "menu" ? "menuitem" : "option";
+  const pressed = variant === "settings"
+    ? ` aria-checked="${active ? "true" : "false"}"`
+    : variant === "lock"
+      ? ` aria-selected="${active ? "true" : "false"}"`
+      : "";
+  const tabIndex = variant === "settings" && !active ? ` tabindex="-1"` : "";
+  const checkIcon = `
+    <svg class="check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+         stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <polyline points="20 6 9 17 4 12"/>
+    </svg>`;
+
+  return `<button type="button" role="${role}" data-lang="${locale.code}" class="language-option language-option-${variant}${activeClass}"${pressed}${tabIndex}>
+    <span class="lang-name">${escapeHtml(locale.label)}</span>
+    <span class="lang-code">${escapeHtml(locale.tag)}</span>
+    ${checkIcon}
+  </button>`;
+}
 
 function buildLangMenus() {
   const locales = window.i18n.listLocales();
   const cur = window.i18n.getLocale();
+  const currentLocale = locales.find((l) => l.code === cur) || locales[0];
 
   // 頂列下拉
-  langMenu.innerHTML = locales
-    .map(
-      (l) => `<button role="menuitem" data-lang="${l.code}" class="${l.code === cur ? "active" : ""}">
-        <span>${escapeHtml(l.label)}</span>
-        <svg class="check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
-             stroke-linecap="round" stroke-linejoin="round">
-          <polyline points="20 6 9 17 4 12"/>
-        </svg>
-      </button>`
-    )
-    .join("");
+  langMenu.innerHTML = locales.map((l) => localeButtonHtml(l, cur, "menu")).join("");
 
-  // 鎖定畫面行內按鈕
-  lockLangRow.innerHTML = locales
-    .map(
-      (l) =>
-        `<button data-lang="${l.code}" class="${l.code === cur ? "active" : ""}">${escapeHtml(l.label)}</button>`
-    )
-    .join("");
+  // 鎖定畫面只保留一個入口,避免語系清單壓過解鎖主流程
+  lockLangRow.innerHTML = `
+    <button
+      id="btn-lock-lang-toggle"
+      class="lock-lang-toggle"
+      type="button"
+      aria-haspopup="listbox"
+      aria-expanded="${lockLangOpen ? "true" : "false"}"
+    >
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+           stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <circle cx="12" cy="12" r="10" />
+        <path d="M2 12h20" />
+        <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
+      </svg>
+      <span>${escapeHtml(t("top.language"))}</span>
+      <strong>${escapeHtml(currentLocale.label)}</strong>
+      <span class="lang-code">${escapeHtml(currentLocale.tag)}</span>
+    </button>
+    <div class="lock-lang-panel ${lockLangOpen ? "" : "hidden"}" role="listbox">
+      ${locales.map((l) => localeButtonHtml(l, cur, "lock")).join("")}
+    </div>`;
 }
 
 function openLangMenu() {
@@ -601,6 +632,10 @@ function openLangMenu() {
 function closeLangMenu() {
   langMenu.classList.add("hidden");
   langBtn.setAttribute("aria-expanded", "false");
+}
+function closeLockLangMenu() {
+  lockLangOpen = false;
+  buildLangMenus();
 }
 
 langBtn.addEventListener("click", (e) => {
@@ -613,23 +648,36 @@ document.addEventListener("click", (e) => {
   if (!langMenu.classList.contains("hidden") && !e.target.closest(".lang-switcher")) {
     closeLangMenu();
   }
+  if (lockLangOpen && !e.target.closest("#lock-lang-row")) {
+    closeLockLangMenu();
+  }
 });
 
-// 透過事件委派處理兩處的語言按鈕
+// 透過事件委派處理各處的語言按鈕
 function handleLangPick(e) {
   const btn = e.target.closest("button[data-lang]");
   if (!btn) return;
   window.i18n.setLocale(btn.dataset.lang);
   closeLangMenu();
+  closeLockLangMenu();
 }
 langMenu.addEventListener("click", handleLangPick);
-lockLangRow.addEventListener("click", handleLangPick);
+lockLangRow.addEventListener("click", (e) => {
+  const toggle = e.target.closest("#btn-lock-lang-toggle");
+  if (toggle) {
+    e.stopPropagation();
+    lockLangOpen = !lockLangOpen;
+    buildLangMenus();
+    return;
+  }
+  handleLangPick(e);
+});
 
 // 語言變動時:重套 DOM、重建選單、重繪鎖定畫面文字、重繪列表(以套用 card.copy 等)
 window.i18n.onChange(() => {
   window.i18n.applyDom();
   buildLangMenus();
-  buildSettingsLangSelect();
+  buildSettingsLangGrid();
   applySettingsValues();
   applyAboutVersion();
   renderVaultOverview();
@@ -698,20 +746,19 @@ $("#btn-edit-save").addEventListener("click", async () => {
 // ---------- 設定 modal ----------
 const btnSettings = $("#btn-settings");
 const settingTheme = $("#setting-theme");
-const settingLanguage = $("#setting-language");
+const settingLanguageGrid = $("#setting-language-grid");
 const settingAutolock = $("#setting-autolock");
 const settingHideCodes = $("#setting-hide-codes");
 
-function buildSettingsLangSelect() {
+function buildSettingsLangGrid() {
   const cur = window.i18n.getLocale();
-  settingLanguage.innerHTML = window.i18n
+  settingLanguageGrid.innerHTML = window.i18n
     .listLocales()
-    .map((l) => `<option value="${l.code}" ${l.code === cur ? "selected" : ""}>${escapeHtml(l.label)}</option>`)
+    .map((l) => localeButtonHtml(l, cur, "settings"))
     .join("");
 }
 function applySettingsValues() {
   settingTheme.value = settings.theme;
-  settingLanguage.value = window.i18n.getLocale();
   settingAutolock.value = String(settings.autolockSec);
   settingHideCodes.checked = !!settings.hideCodes;
 }
@@ -720,7 +767,7 @@ function applyAboutVersion() {
 }
 
 function openSettings() {
-  buildSettingsLangSelect();
+  buildSettingsLangGrid();
   applySettingsValues();
   applyAboutVersion();
   mainScreen.classList.add("hidden");
@@ -741,8 +788,34 @@ settingTheme.addEventListener("change", () => {
   saveSettings();
   applyTheme();
 });
-settingLanguage.addEventListener("change", () => {
-  window.i18n.setLocale(settingLanguage.value);
+settingLanguageGrid.addEventListener("click", handleLangPick);
+settingLanguageGrid.addEventListener("keydown", (e) => {
+  const keys = ["ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown", "Home", "End", " ", "Enter"];
+  if (!keys.includes(e.key)) return;
+
+  const options = Array.from(settingLanguageGrid.querySelectorAll("button[data-lang]"));
+  if (options.length === 0) return;
+  e.preventDefault();
+
+  if (e.key === " " || e.key === "Enter") {
+    document.activeElement?.click();
+    return;
+  }
+
+  const currentIndex = Math.max(0, options.indexOf(document.activeElement));
+  const columnCount = 2;
+  let nextIndex = currentIndex;
+  if (e.key === "Home") nextIndex = 0;
+  else if (e.key === "End") nextIndex = options.length - 1;
+  else if (e.key === "ArrowLeft") nextIndex = Math.max(0, currentIndex - 1);
+  else if (e.key === "ArrowRight") nextIndex = Math.min(options.length - 1, currentIndex + 1);
+  else if (e.key === "ArrowUp") nextIndex = Math.max(0, currentIndex - columnCount);
+  else if (e.key === "ArrowDown") nextIndex = Math.min(options.length - 1, currentIndex + columnCount);
+
+  const nextLocale = options[nextIndex]?.dataset.lang;
+  if (!nextLocale) return;
+  window.i18n.setLocale(nextLocale);
+  setTimeout(() => settingLanguageGrid.querySelector(`button[data-lang="${nextLocale}"]`)?.focus(), 0);
 });
 settingAutolock.addEventListener("change", () => {
   settings.autolockSec = parseInt(settingAutolock.value, 10) || 0;
@@ -910,7 +983,7 @@ function cleanupDrag() {
 applyTheme();
 window.i18n.applyDom();
 buildLangMenus();
-buildSettingsLangSelect();
+buildSettingsLangGrid();
 applyAboutVersion();
 
 refreshStatus().catch((err) => {

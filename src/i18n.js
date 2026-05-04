@@ -13,7 +13,7 @@
 //  - 變數插值用 {name} 格式;t(key, {name: "..."})
 // ----------------------------------------------------------------------------
 
-const SUPPORTED = ["zh-TW", "zh-CN", "en", "ja"];
+const SUPPORTED = ["zh-TW", "zh-CN", "en", "ja", "fr", "es", "de", "ko"];
 const DEFAULT_LOCALE = "zh-TW";
 const STORAGE_KEY = "auth2fa.locale";
 
@@ -1353,6 +1353,7 @@ function listLocales() {
   return SUPPORTED.map((code) => ({
     code,
     label: dictionaries[code]["lang.name"],
+    tag: code,
   }));
 }
 
