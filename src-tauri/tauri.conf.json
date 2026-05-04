@@ -35,6 +35,14 @@
     ],
     "category": "Utility",
     "shortDescription": "本機加密的桌面 2FA Authenticator",
-    "longDescription": "離線、開源、加密儲存的雙因素驗證器,支援 TOTP / HOTP 與 otpauth:// 匯入。"
+    "longDescription": "離線、開源、加密儲存的雙因素驗證器,支援 TOTP / HOTP 與 otpauth:// 匯入。",
+    "macOS": {
+      "minimumSystemVersion": "10.15",
+      "hardenedRuntime": true
+    },
+    "windows": {
+      "digestAlgorithm": "sha256",
+      "timestampUrl": "http://timestamp.digicert.com"
+    }
   }
 }
