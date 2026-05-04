@@ -55,12 +55,17 @@ jobs:
             libjavascriptcoregtk-4.1-dev
 
       - name: Import Apple signing certificate (macOS only)
-        if: matrix.platform == 'macos-latest' && env.APPLE_CERTIFICATE != ''
+        if: matrix.platform == 'macos-latest'
         env:
           APPLE_CERTIFICATE: ${{ secrets.APPLE_CERTIFICATE }}
           APPLE_CERTIFICATE_PASSWORD: ${{ secrets.APPLE_CERTIFICATE_PASSWORD }}
           KEYCHAIN_PASSWORD: ${{ secrets.APPLE_CERTIFICATE_PASSWORD }}
         run: |
+          if [ -z "$APPLE_CERTIFICATE" ]; then
+            echo "未設定 APPLE_CERTIFICATE,跳過 macOS 簽章設定(將產出未簽章包)"
+            exit 0
+          fi
+
           # 解碼 base64 → .p12
           echo "$APPLE_CERTIFICATE" | base64 --decode > $RUNNER_TEMP/cert.p12
 
@@ -81,12 +86,17 @@ jobs:
           security find-identity -v -p codesigning build.keychain
 
       - name: Import Windows signing certificate (Windows only)
-        if: matrix.platform == 'windows-latest' && env.WINDOWS_CERTIFICATE != ''
+        if: matrix.platform == 'windows-latest'
         env:
           WINDOWS_CERTIFICATE: ${{ secrets.WINDOWS_CERTIFICATE }}
           WINDOWS_CERTIFICATE_PASSWORD: ${{ secrets.WINDOWS_CERTIFICATE_PASSWORD }}
         shell: pwsh
         run: |
+          if ([string]::IsNullOrEmpty($env:WINDOWS_CERTIFICATE)) {
+            Write-Host "未設定 WINDOWS_CERTIFICATE,跳過 Windows 簽章設定(將產出未簽章包)"
+            exit 0
+          }
+
           # 解碼 base64 → .pfx
           $bytes = [Convert]::FromBase64String($env:WINDOWS_CERTIFICATE)
           $pfxPath = "$env:RUNNER_TEMP\cert.pfx"
