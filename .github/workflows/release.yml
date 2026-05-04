@@ -85,6 +85,24 @@ jobs:
           security set-key-partition-list -S apple-tool:,apple: -s -k "$KEYCHAIN_PASSWORD" build.keychain
           security find-identity -v -p codesigning build.keychain
 
+          # 把簽章相關變數寫入 $GITHUB_ENV,讓後續 build step 自動繼承
+          # (僅在 secret 真的有設時才寫入;未設時 build step 看不到這些 env,
+          #  Tauri 不會嘗試 codesign,直接產出未簽章 .app/.dmg)
+          {
+            echo "APPLE_SIGNING_IDENTITY=${{ secrets.APPLE_SIGNING_IDENTITY }}"
+            echo "APPLE_ID=${{ secrets.APPLE_ID }}"
+            echo "APPLE_PASSWORD=${{ secrets.APPLE_PASSWORD }}"
+            echo "APPLE_TEAM_ID=${{ secrets.APPLE_TEAM_ID }}"
+          } >> "$GITHUB_ENV"
+
+          # 動態啟用 hardenedRuntime(公證需要)
+          python3 -c "
+          import json
+          with open('src-tauri/tauri.conf.json') as f: cfg = json.load(f)
+          cfg.setdefault('bundle', {}).setdefault('macOS', {})['hardenedRuntime'] = True
+          with open('src-tauri/tauri.conf.json', 'w') as f: json.dump(cfg, f, indent=2, ensure_ascii=False)
+          "
+
       - name: Import Windows signing certificate (Windows only)
         if: matrix.platform == 'windows-latest'
         env:
@@ -118,11 +136,9 @@ jobs:
         uses: tauri-apps/tauri-action@v0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          # ── macOS 簽章 + 公證 ───────────────────────────────
-          APPLE_SIGNING_IDENTITY: ${{ secrets.APPLE_SIGNING_IDENTITY }}
-          APPLE_ID: ${{ secrets.APPLE_ID }}
-          APPLE_PASSWORD: ${{ secrets.APPLE_PASSWORD }}
-          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+          # macOS 簽章/公證 env 由「Import Apple signing certificate」step 在
+          # secret 真的有設時透過 $GITHUB_ENV 注入,這裡不再寫死(避免空字串
+          # 觸發 codesign 卻找不到 identity 而失敗)。
         with:
           projectPath: ./src-tauri
           tagName: "${{ github.ref_type == 'tag' && github.ref_name || format('v{0}-{1}', github.run_number, github.sha) }}"
