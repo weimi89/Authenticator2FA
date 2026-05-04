@@ -278,7 +278,7 @@ function filteredAccounts() {
   });
 }
 
-function renderList() {
+function renderList(animateCards = true) {
   renderVaultOverview();
   if (accounts.length === 0) {
     accountList.classList.add("hidden");
@@ -297,6 +297,7 @@ function renderList() {
   }
 
   accountList.classList.remove("hidden");
+  accountList.classList.toggle("no-card-animation", !animateCards);
   emptyState.classList.add("hidden");
   searchEmpty.classList.add("hidden");
 
@@ -455,7 +456,7 @@ async function tick() {
     if (c.remaining === 0) needsRefresh = true;
   }
   if (needsRefresh) await refreshCodes();
-  renderList();
+  renderList(false);
 }
 
 // ---------- 頂列 ----------
