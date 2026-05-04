@@ -7,8 +7,60 @@ src-tauri/gen/
 
 # macOS
 .DS_Store
+**/.DS_Store
 
 # IDE
 .idea/
 .vscode/
 *.swp
+
+# === 機密檔案防護 ============================================
+# 應用程式本機資料(2FA secrets — 絕對不可進 git)
+vault.json
+**/vault.json
+
+# 全域規則指定的備份目錄(可能含 vault 或舊密鑰)
+backups/
+
+# 密鑰 / 憑證 / 私鑰
+*.env
+.env
+.env.*
+!.env.example
+*.p12
+*.pfx
+*.pem
+*.key
+*.cer
+*.crt
+*.jks
+*.keystore
+*.asc
+*.gpg
+
+# SSH / 雲端帳號設定
+id_rsa
+id_rsa.*
+id_dsa
+id_dsa.*
+id_ecdsa
+id_ecdsa.*
+id_ed25519
+id_ed25519.*
+.npmrc
+.netrc
+.aws/
+credentials
+credentials.*
+secrets.json
+secrets.yml
+secrets.yaml
+
+# 簽章流程暫存 (照 README 指引產生的)
+cert.p12
+cert.pfx
+cert.p12.base64
+
+# === 工具本機狀態 ============================================
+.serena/
+.claude/
