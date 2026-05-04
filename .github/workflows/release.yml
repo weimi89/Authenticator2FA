@@ -125,9 +125,9 @@ jobs:
           APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
         with:
           projectPath: ./src-tauri
-          tagName: ${{ github.ref_type == 'tag' && github.ref_name || format('v{0}-{1}', github.run_number, github.sha) }}
-          releaseName: 'Auth 2FA ${{ github.ref_type == 'tag' && github.ref_name || format('build-{0}', github.run_number) }}'
-          releaseBody: '請從下方資源下載對應作業系統的安裝包。'
+          tagName: "${{ github.ref_type == 'tag' && github.ref_name || format('v{0}-{1}', github.run_number, github.sha) }}"
+          releaseName: "Auth 2FA ${{ github.ref_type == 'tag' && github.ref_name || format('build-{0}', github.run_number) }}"
+          releaseBody: "請從下方資源下載對應作業系統的安裝包。"
           releaseDraft: ${{ github.ref_type == 'tag' }}
           prerelease: false
           args: ${{ matrix.args }}
